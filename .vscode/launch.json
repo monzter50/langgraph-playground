@@ -1,0 +1,60 @@
+{
+  // Requires the Python + Python Debugger extensions and the uv venv selected
+  // as interpreter (".venv/bin/python"). See docs/DEBUGGING.md.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug current exercise file",
+      "type": "debugpy",
+      "request": "launch",
+      // Runs the open file as a module (python -m playground.exercises.exNN_...)
+      // so package imports work exactly like `uv run python -m ...`.
+      "module": "playground.${fileDirnameBasename}.${fileBasenameNoExtension}",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Debug current exercise file (step into LangChain/LangGraph)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "playground.${fileDirnameBasename}.${fileBasenameNoExtension}",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Debug debugging.py demo (fake model, stream_mode=debug)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "playground.debugging",
+      "args": ["--fake", "--mode", "debug"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug pytest (all tests)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-x", "-q"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      // 1) In a terminal: uv run langgraph dev --debug-port 5678
+      // 2) Start this config, set breakpoints in your nodes, run the graph in Studio.
+      "name": "Attach to langgraph dev (port 5678)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "pathMappings": [
+        { "localRoot": "${workspaceFolder}", "remoteRoot": "${workspaceFolder}" }
+      ],
+      "justMyCode": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "dependencies": ["."],
+  "graphs": {
+    "ex04_first_graph": "./src/playground/exercises/ex04_first_graph.py:graph",
+    "ex05_routing": "./src/playground/exercises/ex05_conditional_routing.py:graph",
+    "ex06_react_agent": "./src/playground/exercises/ex06_react_agent.py:graph",
+    "ex07_memory": "./src/playground/exercises/ex07_memory.py:graph",
+    "ex08_human_in_the_loop": "./src/playground/exercises/ex08_human_in_the_loop.py:graph"
+  },
+  "env": ".env",
+  "python_version": "3.12"
+}
