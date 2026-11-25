@@ -25,5 +25,14 @@ def fake_model(*responses: AIMessage | str) -> FakeToolCallingModel:
 @pytest.fixture(autouse=True)
 def _no_api_keys(monkeypatch):
     """Make sure no test accidentally talks to a real provider."""
-    for var in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "MODEL_PROVIDER", "LANGSMITH_TRACING"):
+    for var in (
+        "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY",
+        "MODEL_PROVIDER",
+        "MODEL_NAME",
+        "OLLAMA_MODEL",
+        "OLLAMA_BASE_URL",
+        "OLLAMA_REASONING",
+        "LANGSMITH_TRACING",
+    ):
         monkeypatch.delenv(var, raising=False)
