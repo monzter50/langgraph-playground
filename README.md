@@ -48,8 +48,11 @@ fit in memory and will swap or fail to load, so don't use it here.
 reliable at tool calling and multi-step agent loops, so exercises **03** (tools),
 **06** (ReAct agent) and **08** (human-in-the-loop) are the most likely to
 misbehave: skipped or malformed tool calls, doing math "in their head", or
-stopping early. That's a useful thing to observe and debug, not a bug in the
-exercise; switch back to a cloud model to compare.
+stopping early. For example, `qwen3:8b` gets 03 and 06 right but emits dependent
+calls *in parallel*, filling in the intermediate result itself (`add(3.5, 4)` and
+`multiply(7.5, 2)` in the same turn) instead of waiting for the tool output.
+That's a useful thing to observe and debug, not a bug in the exercise; switch
+back to a cloud model to compare.
 
 ## Exercises
 
