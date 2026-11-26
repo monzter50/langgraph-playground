@@ -17,7 +17,42 @@ cp .env.example .env       # then add ANTHROPIC_API_KEY (or OPENAI_API_KEY)
 
 The model is chosen in [`src/playground/models.py`](src/playground/models.py):
 Anthropic Claude by default (`claude-sonnet-5-5`), OpenAI as a fallback if only
-`OPENAI_API_KEY` is set. Override with `MODEL_PROVIDER` / `MODEL_NAME` in `.env`.
+`OPENAI_API_KEY` is set. Override with `MODEL_PROVIDER` / `MODEL_NAME` in `.env`,
+or run everything on a local model with Ollama (next section).
+
+## Running locally with Ollama
+
+No API key needed: the exercises can run against a local model served by
+[Ollama](https://ollama.com/).
+
+```sh
+ollama pull qwen3:8b        # ~5 GB download, once
+echo "MODEL_PROVIDER=ollama" >> .env
+uv run python -m playground.exercises.ex01_lcel_chain
+uv run langgraph dev        # Studio works the same with local models
+```
+
+Settings (all optional, see [`.env.example`](.env.example)):
+
+| Variable | Default | Meaning |
+|----------|---------|---------|
+| `OLLAMA_MODEL` | `qwen3:8b` | Any model you have pulled (`ollama list`). `MODEL_NAME` is ignored for Ollama. |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Where `ollama serve` is listening. |
+| `OLLAMA_REASONING` | off | qwen3 "thinks" before answering. Off disables thinking so `message.content` is a clean answer (and it's faster). `true` keeps the thinking but moves it to `message.additional_kwargs["reasoning_content"]`; `low` / `medium` / `high` set an effort level where supported. |
+
+**Pick a model that fits your RAM.** On a 16 GB Mac, 8B models such as
+`qwen3:8b` (~5 GB) run comfortably; the larger `gemma4:26b` (~17 GB) does not
+fit in memory and will swap or fail to load, so don't use it here.
+
+**Expect rougher edges than with Claude or GPT.** Small local models are less
+reliable at tool calling and multi-step agent loops, so exercises **03** (tools),
+**06** (ReAct agent) and **08** (human-in-the-loop) are the most likely to
+misbehave: skipped or malformed tool calls, doing math "in their head", or
+stopping early. For example, `qwen3:8b` gets 03 and 06 right but emits dependent
+calls *in parallel*, filling in the intermediate result itself (`add(3.5, 4)` and
+`multiply(7.5, 2)` in the same turn) instead of waiting for the tool output.
+That's a useful thing to observe and debug, not a bug in the exercise; switch
+back to a cloud model to compare.
 
 ## Exercises
 
@@ -63,7 +98,7 @@ CI (GitHub Actions) runs the same on every push / PR.
 
 ```
 src/playground/
-  models.py            # get_chat_model(): picks Anthropic / OpenAI from env
+  models.py            # get_chat_model(): picks Anthropic / OpenAI / Ollama from env
   debugging.py         # stream_mode + set_debug/set_verbose demo
   exercises/ex01..08   # the exercises
 tests/                 # pytest, fake models only

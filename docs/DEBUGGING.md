@@ -204,11 +204,27 @@ Useful extras:
 graph.invoke(inputs, {"run_name": "ex06-try-1", "tags": ["practice"], "metadata": {"lesson": 6}})
 ```
 
+## Local models (Ollama)
+
+Everything above works the same with `MODEL_PROVIDER=ollama` (see the README's
+"Running locally with Ollama"): `stream_mode`, `set_debug`, VS Code breakpoints,
+LangGraph Studio and LangSmith tracing don't care which provider is behind
+`get_chat_model()`. Local runs show up in LangSmith as `ChatOllama` spans (traces
+are still sent to LangSmith if tracing is on, so turn it off if you want runs to
+stay fully offline). The "Needs API key?" column above becomes "needs `ollama serve`
+running" instead.
+
+Tracing is especially handy with small local models: when exercise 03 or 06
+misbehaves, the trace shows whether the model emitted a tool call at all and
+with what arguments.
+
 ## Quick troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| `MissingAPIKeyError: No model API key found` | `cp .env.example .env` and fill `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`. |
+| `MissingAPIKeyError: No model API key found` | `cp .env.example .env` and fill `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`, or set `MODEL_PROVIDER=ollama`. |
+| `ConnectError` / `model "qwen3:8b" not found` with Ollama | Start Ollama (`ollama serve` or the app) and `ollama pull qwen3:8b`; check `OLLAMA_BASE_URL`. |
+| `<think>` text in answers | Leave `OLLAMA_REASONING` unset/`false`, or set `true` to move thinking out of `content`. |
 | `ModuleNotFoundError: playground` | Run via `uv run python -m playground....` from the repo root (and `uv sync`). |
 | Breakpoints are ignored | Check the interpreter is `.venv/bin/python`; use the `justMyCode: false` config for library code. |
 | `GraphRecursionError` | The agent looped too long; inspect with `stream_mode="updates"` or raise `recursion_limit`. |
